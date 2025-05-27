@@ -578,27 +578,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 newPageBtn.click();
             }
-            // Ctrl+F: Find (search)
+            // Ctrl+F: Flip page
             if (e.key === 'f') {
                 e.preventDefault();
-                searchToggleBtn.click();
+                flipBtn.click();
+            }
+            // Ctrl+U: Unflip page
+            if (e.key === 'u') {
+                e.preventDefault();
+                unflipBtn.click();
             }
             // Ctrl+T: Tags
             if (e.key === 't') {
                 e.preventDefault();
                 tagsBtn.click();
             }
-        else {
-            // F: Flip
-            if (e.key === 'f') {
+            // Ctrl+Shift+F: Search
+            if (e.shiftKey && e.key === 'F') {
                 e.preventDefault();
-                flipBtn.click();
+                searchToggleBtn.click();
             }
-            // U: Unflip
-            if (e.key === 'u') {
-                e.preventDefault();
-                unflipBtn.click();
-            }
+        } else {
             // Arrow keys for navigation
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
@@ -617,11 +617,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     toggleSearchPanel();
                 }
             }
-        }
-        // In the same handleKeyboardShortcuts function:
-        if (e.ctrlKey && e.shiftKey && e.key === 'F') {
-            e.preventDefault();
-            searchToggleBtn.click();
         }
     }
 });
