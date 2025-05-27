@@ -566,4 +566,62 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     }
     
+    function handleKeyboardShortcuts(e) {
+        if (e.ctrlKey) {
+            // Ctrl+S: Save
+            if (e.key === 's') {
+                e.preventDefault();
+                saveBtn.click();
+            }
+            // Ctrl+N: New page
+            if (e.key === 'n') {
+                e.preventDefault();
+                newPageBtn.click();
+            }
+            // Ctrl+F: Find (search)
+            if (e.key === 'f') {
+                e.preventDefault();
+                searchToggleBtn.click();
+            }
+            // Ctrl+T: Tags
+            if (e.key === 't') {
+                e.preventDefault();
+                tagsBtn.click();
+            }
+        } else {
+            // F: Flip
+            if (e.key === 'f') {
+                e.preventDefault();
+                flipBtn.click();
+            }
+            // U: Unflip
+            if (e.key === 'u') {
+                e.preventDefault();
+                unflipBtn.click();
+            }
+            // Arrow keys for navigation
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevBtn.click();
+            }
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextBtn.click();
+            }
+            // Escape: Close panels
+            if (e.key === 'Escape') {
+                if (tagsPanel.style.display === 'flex') {
+                    toggleTagsPanel();
+                }
+                if (searchContainer.style.display === 'flex') {
+                    toggleSearchPanel();
+                }
+            }
+        }
+        // In the same handleKeyboardShortcuts function:
+        if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+            e.preventDefault();
+            searchToggleBtn.click();
+        }
+    }
 });
