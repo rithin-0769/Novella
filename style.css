@@ -463,3 +463,84 @@ body {
         width: 250px;
     }
 }
+/* Add these new styles to your existing CSS */
+
+/* Additional Paper Styles */
+.page.dotted {
+  background-image: radial-gradient(#e0d8c8 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.page.handwriting {
+  background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><path d="M0 20 L100% 20 M0 40 L100% 40 M0 60 L100% 60 M0 80 L100% 80" stroke="%23e0d8c8" stroke-width="1" fill="none" /></svg>');
+}
+
+.page.squared {
+  background-image: 
+    linear-gradient(to right, #e0d8c8 1px, transparent 1px),
+    linear-gradient(to bottom, #e0d8c8 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Color Themes */
+.theme-classic {
+  --paper-color: #f9f4e8;
+  --ink-color: #3a3226;
+  --cover-color: #6b4f37;
+  --accent-color: #8c6a4d;
+  --tag-color: #5a7247;
+}
+
+.theme-dark {
+  --paper-color: #2a2a2a;
+  --ink-color: #e0e0e0;
+  --cover-color: #1a1a1a;
+  --accent-color: #4a7c59;
+  --tag-color: #3a5a40;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+.theme-pink {
+  --paper-color: #ffe6f2;
+  --ink-color: #5a1a3a;
+  --cover-color: #a55a8f;
+  --accent-color: #d85a8f;
+  --tag-color: #b04a7c;
+}
+.theme-purple {
+  --paper-color: #f2e6ff;
+  --ink-color: #3a1a5a;
+  --cover-color: #6e3a8f;
+  --accent-color: #8f5ad8;
+  --tag-color: #7c4ab0;
+}
+
+
+.theme-blue {
+  --paper-color: #e6f2ff;
+  --ink-color: #1a3a6a;
+  --cover-color: #3a6ea5;
+  --accent-color: #5a8fd8;
+  --tag-color: #4a7cb0;
+}
+
+
+/* Theme Toggle Button */
+.control-theme {
+  background-color: var(--accent-color);
+}
+
+/* Update existing styles to use theme variables */
+.journal-cover {
+  background-color: var(--cover-color);
+  color: var(--cover-text);
+}
+
+.page {
+  background-color: var(--paper-color);
+  color: var(--ink-color);
+}
+
+.page-content {
+  color: var(--ink-color);
+}
