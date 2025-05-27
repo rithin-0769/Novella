@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 tagsBtn.click();
             }
-        } else {
+            else {
             // F: Flip
             if (e.key === 'f') {
                 e.preventDefault();
