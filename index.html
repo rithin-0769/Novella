@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novella - Smart Journal App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="journal-cover" id="journalCover">
+            <div class="cover-content">
+                <h1>Novella</h1>
+                <p class="subtitle">Your Intelligent Digital Journal</p>
+                <div class="open-hint">Tap to begin</div>
+            </div>
+        </div>
+        
+        <div class="search-container" id="searchContainer">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search entries...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+                <button id="closeSearchBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        
+        <div class="journal" id="journal">
+            <!-- Pages will be added dynamically -->
+        </div>
+        
+        <div class="controls">
+            <button class="btn control-prev" id="prevBtn" title="Previous (←)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="btn control-flip" id="flipBtn" title="Flip (F)">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            <button class="btn control-unflip" id="unflipBtn" title="Unflip (U)" style="display: none;">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            <button class="btn control-next" id="nextBtn" title="Next (→)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <button class="btn control-save" id="saveBtn" title="Save (Ctrl+S)">
+                <i class="fas fa-save"></i>
+            </button>
+            <button class="btn control-new" id="newPageBtn" title="New Page (N)">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="btn control-tags" id="tagsBtn" title="Tags (T)">
+                <i class="fas fa-tags"></i>
+            </button>
+            <button class="btn control-search" id="searchToggleBtn" title="Search (S)">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="btn control-style" id="toggleLinesBtn" title="Paper Style (P)">
+                <i class="fas fa-border-style"></i>
+            </button>
+        </div>
+
+        <div class="tags-panel" id="tagsPanel">
+            <div class="tags-header">
+                <h3>Tags</h3>
+                <button id="closeTagsBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="tags-input-container">
+                <input type="text" id="tagsInput" placeholder="Add tags (comma separated)">
+                <button id="addTagsBtn">Add</button>
+            </div>
+            <div class="tags-list" id="tagsList"></div>
+            <div class="applied-tags" id="appliedTags"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
