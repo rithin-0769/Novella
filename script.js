@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchBtn = document.getElementById('searchBtn');
     const closeSearchBtn = document.getElementById('closeSearchBtn');
     const searchResults = document.getElementById('searchResults');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+
     
     // App State
     let currentPageIndex = 0;
@@ -30,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let isAnimating = false;
     let allTags = new Set();
     let activeTags = new Set();
+    let currentTheme = 'classic';
+    const paperStyles = ['blank', 'lines', 'grid', 'dotted', 'handwriting', 'squared'];
+    const colorThemes = ['classic', 'dark', 'pink', 'blue',  'purple'];
     
     // Initialize first page
     createNewPage();
@@ -51,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     closeSearchBtn.addEventListener('click', toggleSearchPanel);
     searchBtn.addEventListener('click', performSearch);
     document.addEventListener('keydown', handleKeyboardShortcuts);
+    themeToggleBtn.addEventListener('click', toggleColorTheme);
     tagsInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') addTagsToCurrentPage();
     });
@@ -59,6 +65,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Functions
+    function togglePaperStyle() {
+        const currentIndex = paperStyles.indexOf(pageStyle);
+        pageStyle = paperStyles[(currentIndex + 1) % paperStyles.length];
+
+        pages.forEach(page => {
+          page.front.classList.remove(...paperStyles);
+          page.back.classList.remove(...paperStyles);
+          page.front.classList.add(pageStyle);
+          page.back.classList.add(pageStyle);
+        });
+
+        saveJournal();
+    }       
+
+    function toggleColorTheme() {
+        const currentIndex = colorThemes.indexOf(currentTheme);
+        currentTheme = colorThemes[(currentIndex + 1) % colorThemes.length];
+
+        document.body.className = `theme-${currentTheme}`;
+        saveJournal();
+        showToast(`Theme: ${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}`);
+    }       
     function openJournal() {
         journalCover.style.transform = 'rotateY(-180deg)';
         setTimeout(() => {
@@ -209,7 +237,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function saveJournal() {
-        const journalData = pages.map(page => ({
+        const journalData = {
+          pages: pages.map(page => ({
             id: page.id,
             frontContent: page.front.querySelector('.page-content').value,
             backContent: page.back.querySelector('.page-content').value,
@@ -218,12 +247,12 @@ document.addEventListener('DOMContentLoaded', function() {
             date: page.front.querySelector('.page-date').textContent,
             number: page.front.querySelector('.page-number').textContent,
             tags: Array.from(page.tags)
-        }));
+          })),
+          currentTheme: currentTheme,
+          pageStyle: pageStyle
+        };
         localStorage.setItem('foliumJournal', JSON.stringify(journalData));
-        
-        // Update all tags
-        updateAllTags();
-    }
+    }       
     
     function saveJournalWithFeedback() {
         saveJournal();
@@ -235,72 +264,113 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadJournal() {
         const savedData = localStorage.getItem('foliumJournal');
         if (savedData) {
-            const journalData = JSON.parse(savedData);
-            
-            journal.innerHTML = '';
-            pages = [];
-            
-            journalData.forEach((pageData, index) => {
-                const pageContainer = document.createElement('div');
-                pageContainer.className = 'page-container';
-                pageContainer.dataset.id = pageData.id;
-                
-                if (pageData.flipped) {
-                    pageContainer.style.transform = 'rotateY(-180deg)';
+            try {
+                const journalData = JSON.parse(savedData);
+
+                // Load theme if available
+                if (journalData.currentTheme) {
+                    currentTheme = journalData.currentTheme;
+                    document.body.className = `theme-${currentTheme}`;
+                } else {
+                    // Default to classic theme if not specified
+                    currentTheme = 'classic';
+                    document.body.className = 'theme-classic';
                 }
-                
-                const pageFront = document.createElement('div');
-                pageFront.className = `page page-front ${pageData.style}`;
-                pageFront.innerHTML = `
-                    <div class="page-header">
-                        <div class="page-date">${pageData.date}</div>
-                        <div class="page-number">${pageData.number}</div>
-                    </div>
-                    <textarea class="page-content">${pageData.frontContent}</textarea>
-                    <div class="page-tags"></div>
-                `;
-                
-                const pageBack = document.createElement('div');
-                pageBack.className = `page page-back ${pageData.style}`;
-                pageBack.innerHTML = `
-                    <div class="page-header">
-                        <div class="page-date">${pageData.date}</div>
-                        <div class="page-number">${pageData.number} (Back)</div>
-                    </div>
-                    <textarea class="page-content">${pageData.backContent}</textarea>
-                    <div class="page-tags"></div>
-                `;
-                
-                // Add input event listeners
-                [pageFront, pageBack].forEach(page => {
-                    const textarea = page.querySelector('.page-content');
-                    textarea.addEventListener('input', saveJournal);
-                });
-                
-                pageContainer.appendChild(pageFront);
-                pageContainer.appendChild(pageBack);
-                journal.appendChild(pageContainer);
-                
-                const pageTags = new Set(pageData.tags || []);
-                pages.push({
-                    id: pageData.id,
-                    element: pageContainer,
-                    front: pageFront,
-                    back: pageBack,
-                    flipped: pageData.flipped,
-                    tags: pageTags
-                });
-                
-                // Update tags display
-                updateTagsForPage(pageData.id);
-            });
-            
-            currentPageIndex = journalData.length > 0 ? journalData.length - 1 : 0;
-            pageStyle = journalData.length > 0 ? journalData[0].style : 'blank';
-            updatePageVisibility();
-            
-            // Update all tags
-            updateAllTags();
+
+                // Load paper style if available
+                if (journalData.pageStyle) {
+                    pageStyle = journalData.pageStyle;
+                } else {
+                    // Default to blank style if not specified
+                    pageStyle = 'blank';
+                }
+
+                // Clear existing pages
+                journal.innerHTML = '';
+                pages = [];
+
+                // Load pages data if available
+                if (journalData.pages && Array.isArray(journalData.pages)) {
+                    journalData.pages.forEach((pageData, index) => {
+                        const pageContainer = document.createElement('div');
+                        pageContainer.className = 'page-container';
+                        pageContainer.dataset.id = pageData.id;
+
+                        if (pageData.flipped) {
+                            pageContainer.style.transform = 'rotateY(-180deg)';
+                        }
+
+                        const pageFront = document.createElement('div');
+                        pageFront.className = `page page-front ${pageData.style || pageStyle}`;
+                        pageFront.innerHTML = `
+                            <div class="page-header">
+                                <div class="page-date">${pageData.date}</div>
+                                <div class="page-number">${pageData.number}</div>
+                            </div>
+                            <textarea class="page-content">${pageData.frontContent || ''}</textarea>
+                            <div class="page-tags"></div>
+                        `;
+
+                        const pageBack = document.createElement('div');
+                        pageBack.className = `page page-back ${pageData.style || pageStyle}`;
+                        pageBack.innerHTML = `
+                            <div class="page-header">
+                                <div class="page-date">${pageData.date}</div>
+                                <div class="page-number">${pageData.number} (Back)</div>
+                            </div>
+                            <textarea class="page-content">${pageData.backContent || ''}</textarea>
+                            <div class="page-tags"></div>
+                        `;
+
+                        // Add input event listeners
+                        [pageFront, pageBack].forEach(page => {
+                            const textarea = page.querySelector('.page-content');
+                            textarea.addEventListener('input', () => {
+                                saveJournal();
+                                updateTagsForPage(pageData.id);
+                            });
+                        });
+
+                        pageContainer.appendChild(pageFront);
+                        pageContainer.appendChild(pageBack);
+                        journal.appendChild(pageContainer);
+
+                        const pageTags = new Set(pageData.tags || []);
+                        pages.push({
+                            id: pageData.id,
+                            element: pageContainer,
+                            front: pageFront,
+                            back: pageBack,
+                            flipped: pageData.flipped || false,
+                            tags: pageTags
+                        });
+
+                        // Update tags display
+                        updateTagsForPage(pageData.id);
+                    });
+
+                    // Update all tags from loaded pages
+                    updateAllTags();
+
+                    // Set current page to last page if available
+                    currentPageIndex = journalData.pages.length > 0 ? journalData.pages.length - 1 : 0;
+                    updatePageVisibility();
+
+                    // Show loaded notification
+                    showToast(`Journal loaded with ${pages.length} pages`);
+                } else {
+                    // No pages data found, create first page
+                    createNewPage();
+                }
+            } catch (error) {
+                console.error('Error loading journal:', error);
+                // If loading fails, start fresh
+                createNewPage();
+                showToast('New journal started');
+            }
+        } else {
+            // No saved data found, create first page
+            createNewPage();
         }
     }
     
